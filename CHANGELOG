@@ -1,0 +1,13 @@
+# CHANGELOG
+
+## 20260620
+
+0.0.0: Initial release.
+
+1. + CalDAV connection class (< WebDAV) providing the four CalDAV-specific protocol verbs: mkcalendar, calendar_query, calendar_multiget, freebusy_query.
+2. + Net::HTTP::Mkcalendar request class. Not provided by Ruby's standard library. Mirrors webdav's Net::HTTP::Report. The REPORT method (used by calendar_query, calendar_multiget, freebusy_query) is already provided by webdav 0.2.0 and is reused.
+3. + CalDAV::MultiStatus (< WebDAV::MultiStatus): type-preserving subclass. Overrides the private WebDAV::MultiStatus#parse_response to wrap each resource in a CalDAV::Resource. Interim coupling to a private webdav method; dissolves when webdav objectifies resources at the factoring stage.
+4. + CalDAV::Resource: wraps a webdav resource hash and adds CalDAV-namespace navigation accessors: calendar_data, calendar_description, supported_calendar_component_set, calendar_timezone, is_calendar?. Strictly navigation, not parsing — accessors return raw iCalendar strings/values; iCalendar parsing into domain objects is Layer 2.
+5. + Discovery helpers: CalDAV#current_user_principal, #calendar_home_set, #calendars. Return paths/strings. The object-oriented discovery API is Layer 2 (future release).
+6. + Layer 1 (Protocol) of the planned three-layer ecosystem. Layer 2 (Objects: Event/Calendar/Principal value objects with iCalendar parsing) and Layer 3 (Queryable: Namo-backed Calendar) are future releases — reserved require paths are caldav.rb/objects and caldav.rb/queryable respectively.
+7. + Read-only compatibility. Writes (requiring If-Match conditional headers, which webdav's #put does not yet expose), OAuth, sync-collection, and server-quirk handling are deferred.

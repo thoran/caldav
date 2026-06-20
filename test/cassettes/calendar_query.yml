@@ -1,0 +1,298 @@
+---
+http_interactions:
+- request:
+    method: propfind
+    uri: https://caldav.example.com/dav/
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <d:propfind xmlns:d="DAV:">
+          <d:prop><d:current-user-principal/></d:prop>
+        </d:propfind>
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Authorization:
+      - "<BASIC_AUTH>"
+      Content-Type:
+      - application/xml; charset=utf-8
+      Depth:
+      - '0'
+  response:
+    status:
+      code: 207
+      message: Multi-Status
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Sat, 20 Jun 2026 16:19:40 GMT
+      Content-Type:
+      - application/xml; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding, Brief, Prefer
+      X-Frontend:
+      - phl-frontend-02
+      X-Trace-Id:
+      - ti_108db05f9b1508d66e5e7df5067b33f6
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version="1.0" encoding="utf-8"?>
+        <d:multistatus xmlns:d="DAV:">
+          <d:response>
+            <d:href>/dav/</d:href>
+            <d:propstat>
+              <d:prop>
+                <d:current-user-principal>
+                  <d:href>/dav/principals/user/anon/</d:href>
+                </d:current-user-principal>
+              </d:prop>
+              <d:status>HTTP/1.1 200 OK</d:status>
+            </d:propstat>
+          </d:response>
+        </d:multistatus>
+  recorded_at: Sat, 20 Jun 2026 16:19:40 GMT
+- request:
+    method: propfind
+    uri: https://caldav.example.com/dav/principals/user/anon/
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <d:propfind xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav">
+          <d:prop><c:calendar-home-set/></d:prop>
+        </d:propfind>
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Authorization:
+      - "<BASIC_AUTH>"
+      Content-Type:
+      - application/xml; charset=utf-8
+      Depth:
+      - '0'
+  response:
+    status:
+      code: 207
+      message: Multi-Status
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Sat, 20 Jun 2026 16:19:41 GMT
+      Content-Type:
+      - application/xml; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding, Brief, Prefer
+      X-Frontend:
+      - phl-frontend-01
+      X-Trace-Id:
+      - ti_9e719c3feae96867a62f251b707b94c3
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version="1.0" encoding="utf-8"?>
+        <d:multistatus xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav">
+          <d:response>
+            <d:href>/dav/principals/user/anon/</d:href>
+            <d:propstat>
+              <d:prop>
+                <c:calendar-home-set>
+                  <d:href>/dav/calendars/user/anon/</d:href>
+                </c:calendar-home-set>
+              </d:prop>
+              <d:status>HTTP/1.1 200 OK</d:status>
+            </d:propstat>
+          </d:response>
+        </d:multistatus>
+  recorded_at: Sat, 20 Jun 2026 16:19:41 GMT
+- request:
+    method: propfind
+    uri: https://caldav.example.com/dav/calendars/user/anon/
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <d:propfind xmlns:d="DAV:">
+          <d:prop>
+            <d:resourcetype/>
+          </d:prop>
+        </d:propfind>
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Authorization:
+      - "<BASIC_AUTH>"
+      Content-Type:
+      - application/xml; charset=utf-8
+      Depth:
+      - '1'
+  response:
+    status:
+      code: 207
+      message: Multi-Status
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Sat, 20 Jun 2026 16:19:42 GMT
+      Content-Type:
+      - application/xml; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding, Brief, Prefer
+      X-Frontend:
+      - phl-frontend-02
+      X-Trace-Id:
+      - ti_c397ea718003980d2cfab78fd87cf147
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version="1.0" encoding="utf-8"?>
+        <d:multistatus xmlns:d="DAV:" xmlns:C="urn:ietf:params:xml:ns:caldav" xmlns:CS="http://calendarserver.org/ns/">
+          <d:response>
+            <d:href>/dav/calendars/user/anon/</d:href>
+            <d:propstat>
+              <d:prop>
+                <d:resourcetype>
+                  <d:collection/>
+                </d:resourcetype>
+              </d:prop>
+              <d:status>HTTP/1.1 200 OK</d:status>
+            </d:propstat>
+          </d:response>
+          <d:response>
+            <d:href>/dav/calendars/user/anon/D21D8E6A-5204-4E29-9339-18C60E1F3DD3/</d:href>
+            <d:propstat>
+              <d:prop>
+                <d:resourcetype>
+                  <d:collection/>
+                  <C:calendar/>
+                </d:resourcetype>
+              </d:prop>
+              <d:status>HTTP/1.1 200 OK</d:status>
+            </d:propstat>
+          </d:response>
+          <d:response>
+            <d:href>/dav/calendars/user/anon/Default/</d:href>
+            <d:propstat>
+              <d:prop>
+                <d:resourcetype>
+                  <d:collection/>
+                  <C:calendar/>
+                </d:resourcetype>
+              </d:prop>
+              <d:status>HTTP/1.1 200 OK</d:status>
+            </d:propstat>
+          </d:response>
+          <d:response>
+            <d:href>/dav/calendars/user/anon/Inbox/</d:href>
+            <d:propstat>
+              <d:prop>
+                <d:resourcetype>
+                  <d:collection/>
+                  <C:schedule-inbox/>
+                </d:resourcetype>
+              </d:prop>
+              <d:status>HTTP/1.1 200 OK</d:status>
+            </d:propstat>
+          </d:response>
+          <d:response>
+            <d:href>/dav/calendars/user/anon/Outbox/</d:href>
+            <d:propstat>
+              <d:prop>
+                <d:resourcetype>
+                  <d:collection/>
+                  <C:schedule-outbox/>
+                </d:resourcetype>
+              </d:prop>
+              <d:status>HTTP/1.1 200 OK</d:status>
+            </d:propstat>
+          </d:response>
+        </d:multistatus>
+  recorded_at: Sat, 20 Jun 2026 16:19:42 GMT
+- request:
+    method: report
+    uri: https://caldav.example.com/dav/calendars/user/anon/D21D8E6A-5204-4E29-9339-18C60E1F3DD3/
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version="1.0" encoding="UTF-8"?>
+        <c:calendar-query xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav">
+          <d:prop>
+            <d:getetag/>
+            <c:calendar-data/>
+          </d:prop>
+          <c:filter>
+            <c:comp-filter name="VCALENDAR">
+              <c:comp-filter name="VEVENT"/>
+            </c:comp-filter>
+          </c:filter>
+        </c:calendar-query>
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+      Authorization:
+      - "<BASIC_AUTH>"
+      Content-Type:
+      - application/xml; charset=utf-8
+      Depth:
+      - '1'
+  response:
+    status:
+      code: 207
+      message: Multi-Status
+    headers:
+      Server:
+      - nginx
+      Date:
+      - Sat, 20 Jun 2026 16:19:43 GMT
+      Content-Type:
+      - application/xml; charset=utf-8
+      Transfer-Encoding:
+      - chunked
+      Connection:
+      - keep-alive
+      Vary:
+      - Accept-Encoding, Brief, Prefer
+      X-Frontend:
+      - phl-frontend-02
+      X-Trace-Id:
+      - ti_460f6fed0b2beb0a31b11beab9314056
+    body:
+      encoding: UTF-8
+      string: |
+        <?xml version="1.0" encoding="utf-8"?>
+        <d:multistatus xmlns:d="DAV:" xmlns:c="urn:ietf:params:xml:ns:caldav">
+        </d:multistatus>
+  recorded_at: Sat, 20 Jun 2026 16:19:43 GMT
+recorded_with: VCR 6.4.0
