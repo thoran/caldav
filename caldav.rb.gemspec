@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.version = CalDAV::VERSION
 
   spec.summary = "A Ruby CalDAV client library."
-  spec.description = "A Ruby CalDAV client library, built on webdav (RFC 4791)."
+  spec.description = "A Ruby CalDAV client library (RFC 4791)."
 
   spec.author = 'thoran'
   spec.email = 'code@thoran.com'

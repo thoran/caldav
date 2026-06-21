@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 20260621
+
+0.0.1: Lowercase load file; require VERSION; MultiStatus tests.
+
+1. /CalDAV.rb/caldav.rb/
+2. ~ lib/caldav.rb: + require_relative './CalDAV/VERSION'
+3. ~ caldav.rb.gemspec description
+4. + CalDAV::MultiStatus unit test, covering the two overrides over WebDAV::MultiStatus: parse_response (wraps each response as a CalDAV::Resource, in order) and parse_properties (a pretty-printed nested property is kept as serialised markup rather than collapsing to inter-tag whitespace).
+5. ~ VERSION: /0.0.0/0.0.1/
+
 ## 20260620
 
 0.0.0: Initial release.

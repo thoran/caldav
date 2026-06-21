@@ -4,5 +4,5 @@
 class WebDAV; end
 
 class CalDAV < WebDAV
-  VERSION = '0.0.0'
+  VERSION = '0.0.1'
 end

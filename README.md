@@ -28,7 +28,7 @@ caldav.rb is designed in three layers, each a strict superset of the one below. 
 ## Usage
 
 ```ruby
-require 'caldav'
+require 'caldav.rb'
 
 caldav = CalDAV.new('https://caldav.example.com/dav/', username: 'user', password: 'pass')
 ```

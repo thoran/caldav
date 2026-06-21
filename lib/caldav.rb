@@ -3,8 +3,9 @@
 
 require 'webdav'
 
-require_relative './CalDAV/Resource'
 require_relative './CalDAV/MultiStatus'
+require_relative './CalDAV/Resource'
+require_relative './CalDAV/VERSION'
 require_relative './Net/HTTP/Mkcalendar'
 
 class CalDAV < WebDAV
