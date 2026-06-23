@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 20260623
+
+0.1.0: Complete the RFC 4791 §5.2 navigation surface.
+
+1. + CalDAV::Resource#supported_calendar_data (§5.2.4)
+2. + CalDAV::Resource#max_resource_size (§5.2.5)
+3. + CalDAV::Resource#min_date_time (§5.2.6)
+4. + CalDAV::Resource#max_date_time (§5.2.7)
+5. + CalDAV::Resource#max_instances (§5.2.8)
+6. + CalDAV::Resource#max_attendees_per_instance (§5.2.9)
+7. + CalDAV::Resource unit tests for the six accessors. supported-calendar-data is an empty-element-with-attributes property, so it falls through MultiStatus#parse_properties to its serialised markup (like supported-calendar-component-set); the other five are plain text-valued. All return raw strings — no Integer/time coercion, which stays Layer 2's job.
+8. ~ README navigation-accessor list.
+9. ~ VERSION: /0.0.1/0.1.0/
+
 ## 20260621
 
 0.0.1: Lowercase load file; require VERSION; MultiStatus tests.

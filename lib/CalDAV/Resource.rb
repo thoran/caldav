@@ -34,8 +34,32 @@ class CalDAV < WebDAV
       property(NAMESPACE, 'supported-calendar-component-set')
     end
 
+    def supported_calendar_data
+      property(NAMESPACE, 'supported-calendar-data')
+    end
+
     def calendar_timezone
       property(NAMESPACE, 'calendar-timezone')
+    end
+
+    def max_resource_size
+      property(NAMESPACE, 'max-resource-size')
+    end
+
+    def min_date_time
+      property(NAMESPACE, 'min-date-time')
+    end
+
+    def max_date_time
+      property(NAMESPACE, 'max-date-time')
+    end
+
+    def max_instances
+      property(NAMESPACE, 'max-instances')
+    end
+
+    def max_attendees_per_instance
+      property(NAMESPACE, 'max-attendees-per-instance')
     end
 
     # Matches a <calendar> element (under any namespace prefix) in the serialised

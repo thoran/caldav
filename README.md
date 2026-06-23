@@ -99,7 +99,13 @@ The REPORT verbs return `CalDAV::MultiStatus`, a type-preserving subclass of `We
 - `calendar_data` — the iCalendar string from `<c:calendar-data>`
 - `calendar_description` — `<c:calendar-description>`
 - `supported_calendar_component_set` — `<c:supported-calendar-component-set>`
+- `supported_calendar_data` — `<c:supported-calendar-data>`
 - `calendar_timezone` — the VTIMEZONE string from `<c:calendar-timezone>`
+- `max_resource_size` — `<c:max-resource-size>`
+- `min_date_time` — `<c:min-date-time>`
+- `max_date_time` — `<c:max-date-time>`
+- `max_instances` — `<c:max-instances>`
+- `max_attendees_per_instance` — `<c:max-attendees-per-instance>`
 - `is_calendar?` — true when `<d:resourcetype>` includes `<c:calendar/>`
 
 These are strictly navigation: they return raw strings and values, never parsed iCalendar objects. Parsing is Layer 2's job.

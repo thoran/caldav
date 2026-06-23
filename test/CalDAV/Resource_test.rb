@@ -13,6 +13,12 @@ describe CalDAV::Resource do
             <d:prop>
               <d:resourcetype><d:collection/><c:calendar/></d:resourcetype>
               <c:calendar-description>Work calendar</c:calendar-description>
+              <c:supported-calendar-data><c:calendar-data content-type="text/calendar" version="2.0"/></c:supported-calendar-data>
+              <c:max-resource-size>10485760</c:max-resource-size>
+              <c:min-date-time>19000101T000000Z</c:min-date-time>
+              <c:max-date-time>20491231T235959Z</c:max-date-time>
+              <c:max-instances>100</c:max-instances>
+              <c:max-attendees-per-instance>25</c:max-attendees-per-instance>
             </d:prop>
             <d:status>HTTP/1.1 200 OK</d:status>
           </d:propstat>
@@ -59,6 +65,30 @@ describe CalDAV::Resource do
 
   it "reads calendar-data" do
     _(event_resource.calendar_data).must_equal 'BEGIN:VCALENDAR'
+  end
+
+  it "reads supported-calendar-data as serialised markup" do
+    _(calendar_resource.supported_calendar_data).must_match %r{<(?:\w+:)?calendar-data\b[^>]*content-type=['"]text/calendar['"][^>]*version=['"]2\.0['"]}
+  end
+
+  it "reads max-resource-size" do
+    _(calendar_resource.max_resource_size).must_equal '10485760'
+  end
+
+  it "reads min-date-time" do
+    _(calendar_resource.min_date_time).must_equal '19000101T000000Z'
+  end
+
+  it "reads max-date-time" do
+    _(calendar_resource.max_date_time).must_equal '20491231T235959Z'
+  end
+
+  it "reads max-instances" do
+    _(calendar_resource.max_instances).must_equal '100'
+  end
+
+  it "reads max-attendees-per-instance" do
+    _(calendar_resource.max_attendees_per_instance).must_equal '25'
   end
 
   it "identifies a calendar collection" do
