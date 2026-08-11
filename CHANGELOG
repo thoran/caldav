@@ -1,5 +1,16 @@
 # CHANGELOG
 
+## 20260811
+
+0.2.0: Begin Layer 2 (Objects) — Calendar value objects and object-returning discovery.
+
+1. + CalDAV::Calendar, a value object (path, display_name, ctag, color, description, timezone, supported_components), with .from_resource mapping a CalDAV::Resource, and .all(client:, home:) discovering a home's calendars as Calendars — the eodhd model-class-method form; the client stays the low-level raw path.
+2. + the object-layer entry points: require 'CalDAV/Objects' (default, with extensions) and require 'CalDAV/Objects/Core' (objects without the extension accessors).
+3. + a composable vendor-extension layer: lib/CalDAV/Extensions/CalendarServer.rb (getctag) and Apple.rb (calendar-color). Each is a module that prepends onto the client to add its namespace and property to the calendar-discovery request and mixes a reader into CalDAV::Resource, composing via super so vendors stack rather than clobber. Layer 1 stays strictly RFC 4791 (empty base hooks); the object layer loads both by default, 'CalDAV/Objects/Core' loads neither, and a consumer may require a single vendor. from_resource reads ctag/color opportunistically.
+4. + CalDAV::Resource#display_name (DAV:displayname).
+5. ~ CalDAV#calendars: returns CalDAV::Resource objects rather than href strings, from a fuller PROPFIND (displayname, calendar-description, calendar-timezone, supported-calendar-component-set). Callers wanting raw read the resources directly; Calendar.all maps them.
+
+
 ## 20260623
 
 0.1.0: Complete the RFC 4791 §5.2 navigation surface.
@@ -14,6 +25,7 @@
 8. ~ README navigation-accessor list.
 9. ~ VERSION: /0.0.1/0.1.0/
 
+
 ## 20260621
 
 0.0.1: Lowercase load file; require VERSION; MultiStatus tests.
@@ -23,6 +35,7 @@
 3. ~ caldav.rb.gemspec description
 4. + CalDAV::MultiStatus unit test, covering the two overrides over WebDAV::MultiStatus: parse_response (wraps each response as a CalDAV::Resource, in order) and parse_properties (a pretty-printed nested property is kept as serialised markup rather than collapsing to inter-tag whitespace).
 5. ~ VERSION: /0.0.0/0.0.1/
+
 
 ## 20260620
 

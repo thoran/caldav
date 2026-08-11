@@ -37,8 +37,10 @@ class CalDAV < WebDAV
     handle_response(response)
   end
 
-  # Discovery helpers. Return paths/strings. And object-oriented discovery API
-  # (Principal/Calendar objects) is is planned.
+  # Discovery helpers. current_user_principal and calendar_home_set return href
+  # strings; calendars returns CalDAV::Resource objects (the navigation surface),
+  # which the object layer (CalDAV::Calendar.all, via require 'CalDAV/Objects')
+  # maps into value objects.
 
   def current_user_principal(path = discovery_path)
     resource = propfind_as_caldav(path, body: current_user_principal_body, depth: '0').resources.first
@@ -52,7 +54,7 @@ class CalDAV < WebDAV
 
   def calendars(home = calendar_home_set)
     resources = propfind_as_caldav(home, body: calendars_body, depth: '1').resources
-    resources.select{|resource| resource.is_calendar?}.collect{|resource| resource.href}
+    resources.select{|resource| resource.is_calendar?}
   end
 
   private
@@ -126,11 +128,21 @@ class CalDAV < WebDAV
   def calendars_body
     <<~XML
       <?xml version="1.0" encoding="UTF-8"?>
-      <d:propfind xmlns:d="DAV:">
+      <d:propfind xmlns:d="DAV:" xmlns:c="#{NAMESPACE}"#{calendars_request_namespaces}>
         <d:prop>
+          <d:displayname/>
           <d:resourcetype/>
+          <c:calendar-description/>
+          <c:calendar-timezone/>
+          <c:supported-calendar-component-set/>#{calendars_request_properties}
         </d:prop>
       </d:propfind>
     XML
   end
+
+  # Root of the calendar-discovery extension chain. Extension modules prepend
+  # onto these and super, so their contributions compose rather than clobber;
+  # empty here keeps the request strictly RFC 4791.
+  def calendars_request_namespaces; ''; end
+  def calendars_request_properties;  ''; end
 end

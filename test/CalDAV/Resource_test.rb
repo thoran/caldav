@@ -12,6 +12,7 @@ describe CalDAV::Resource do
           <d:propstat>
             <d:prop>
               <d:resourcetype><d:collection/><c:calendar/></d:resourcetype>
+              <d:displayname>Work</d:displayname>
               <c:calendar-description>Work calendar</c:calendar-description>
               <c:supported-calendar-data><c:calendar-data content-type="text/calendar" version="2.0"/></c:supported-calendar-data>
               <c:max-resource-size>10485760</c:max-resource-size>
@@ -57,6 +58,10 @@ describe CalDAV::Resource do
 
   it "exposes href" do
     _(calendar_resource.href).must_equal '/calendars/user/work/'
+  end
+
+  it "reads displayname" do
+    _(calendar_resource.display_name).must_equal 'Work'
   end
 
   it "reads calendar-description" do

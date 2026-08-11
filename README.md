@@ -1,6 +1,6 @@
 # caldav.rb
 
-A CalDAV client library for Ruby, built on [webdav](https://github.com/thoran/webdav) and implementing RFC 4791. This release ships **Layer 1 (Protocol)** of a planned three-layer ecosystem.
+A CalDAV client library for Ruby, built on [webdav](https://github.com/thoran/webdav) and implementing RFC 4791. It ships **Layer 1 (Protocol)** and the beginning of **Layer 2 (Objects)** — Calendar objects — of a planned three-layer ecosystem.
 
 
 ## Installation
@@ -18,11 +18,11 @@ gem 'caldav.rb'
 
 ## Concepts
 
-caldav.rb is designed in three layers, each a strict superset of the one below. This release ships Layer 1 only; the higher layers are future releases with reserved require paths.
+caldav.rb is designed in three layers, each a strict superset of the one below. Layer 1 is complete; Layer 2 has begun with Calendar objects; its Event and Principal objects, and all of Layer 3, are future releases.
 
-- **Layer 1 — Protocol** (this release). The CalDAV verbs, multistatus responses, and namespace-aware navigation accessors. The equivalent of a raw protocol library: it returns CalDAV-typed responses but does not parse iCalendar payloads or construct domain objects. Most users will want Layer 2 once it ships; until then, the protocol layer is usable directly by reading `resource.calendar_data` and parsing it with the `icalendar` gem.
-- **Layer 2 — Objects** (future, `require 'caldav.rb/objects'`). `CalDAV::Event`, `CalDAV::Calendar`, and `CalDAV::Principal` value objects with iCalendar parsing and convenience predicates.
-- **Layer 3 — Queryable** (future, `require 'caldav.rb/queryable'`). A [Namo](https://github.com/thoran/namo)-backed `CalDAV::Query::Calendar` exposing events as queryable rows with derived columns.
+- **Layer 1 — Protocol.** The CalDAV verbs, multistatus responses, and namespace-aware navigation accessors. The equivalent of a raw protocol library: it returns CalDAV-typed responses but does not parse iCalendar payloads or construct domain objects. For events, read `resource.calendar_data` and parse it with the `icalendar` gem until Layer 2's `CalDAV::Event` lands.
+- **Layer 2 — Objects** (`require 'CalDAV/Objects'`). Value objects over the protocol layer. `CalDAV::Calendar` and object-returning discovery (`CalDAV::Calendar.all`) ship now, with vendor properties (getctag, calendar-color) available and separable (`require 'CalDAV/Objects/Core'` to omit them). `CalDAV::Event` (with iCalendar parsing) and `CalDAV::Principal` are still to come.
+- **Layer 3 — Queryable** (future, `require 'CalDAV/Queryable'`). A [Namo](https://github.com/thoran/namo)-backed `CalDAV::Query::Calendar` exposing events as queryable rows with derived columns.
 
 
 ## Usage
@@ -33,12 +33,43 @@ require 'caldav.rb'
 caldav = CalDAV.new('https://caldav.example.com/dav/', username: 'user', password: 'pass')
 ```
 
+The object layer (`require 'CalDAV/Objects'`) is the high-level API; today it covers calendar discovery. Everything else below is the protocol layer it is built on — which you can always use directly for raw access.
+
 ### Discovery
+
+With the object layer, listing calendars returns `CalDAV::Calendar` objects — `Calendar.all` walks principal → home-set → calendars for you:
+
+```ruby
+require 'CalDAV/Objects'
+CalDAV::Calendar.all(client: caldav).each{|calendar| puts calendar.display_name}
+```
+
+Each `Calendar` exposes its collection's properties:
+
+```ruby
+calendar = CalDAV::Calendar.all(client: caldav).first
+calendar.path                  # "/dav/calendars/user/work/"
+calendar.description           # the calendar-description string
+calendar.timezone              # the raw VTIMEZONE string, if the server sets one
+calendar.supported_components  # the raw supported-component-set (unparsed markup)
+calendar.ctag                  # change tag for cheap sync-detection (vendor extension)
+calendar.color                 # the calendar colour (vendor extension)
+calendar.to_s                  # display name, or path when unnamed
+```
+
+`ctag` and `color` come from the vendor extensions, loaded by default. Require the core objects instead to omit them — the readers stay, but return `nil`:
+
+```ruby
+require 'CalDAV/Objects/Core'  # strictly RFC 4791 — no vendor extensions
+CalDAV::Calendar.all(client: caldav).first.ctag   # => nil
+```
+
+Drop to the protocol layer when you want the raw resources, or aren't loading the object layer — the same walk, step by step:
 
 ```ruby
 principal = caldav.current_user_principal
 home = caldav.calendar_home_set(principal)
-caldav.calendars(home).each{|href| puts href}
+caldav.calendars(home).each{|resource| puts resource.href}  # CalDAV::Resource objects
 ```
 
 Each discovery helper defaults its argument to the result of the previous step, so `caldav.calendars` alone walks principal → home-set → calendars.
@@ -77,18 +108,30 @@ caldav.mkcalendar('/calendars/user/new/', body: mkcalendar_xml)
 
 ## Methods
 
-### Protocol verbs (RFC 4791)
+### Layer 1 — Protocol (`require 'caldav.rb'`)
+
+Raw CalDAV-typed responses and navigation resources; no domain objects.
+
+#### Protocol verbs (RFC 4791)
 
 - `mkcalendar(path, body:)` — §5.3.1. Create a calendar collection. Returns a `WebDAV::Response`.
 - `calendar_query(path, body:, depth:)` — §7.8. REPORT with a `<c:calendar-query>` body. Returns a `CalDAV::MultiStatus`.
 - `calendar_multiget(path, body:, depth:)` — §7.9. REPORT with a `<c:calendar-multiget>` body. Returns a `CalDAV::MultiStatus`.
 - `freebusy_query(path, body:, depth:)` — §7.10. REPORT with a `<c:free-busy-query>` body. Returns a raw `WebDAV::Response` carrying VFREEBUSY iCalendar data — **not** a multistatus. This asymmetry is inherent to the CalDAV spec.
 
-### Discovery
+#### Discovery
 
 - `current_user_principal(path = base URL path)` — returns the principal URL string. PROPFINDs the base URL's path by default; pass a path to start discovery elsewhere.
 - `calendar_home_set(principal = current_user_principal)` — returns the calendar-home-set URL string.
-- `calendars(home = calendar_home_set)` — returns an array of calendar collection URL strings.
+- `calendars(home = calendar_home_set)` — returns the calendar-collection `CalDAV::Resource`s.
+
+### Layer 2 — Objects (`require 'CalDAV/Objects'`)
+
+Value objects built over Layer 1. The default require also loads the vendor extensions (`getctag`, `calendar-color`); `require 'CalDAV/Objects/Core'` omits them.
+
+- `CalDAV::Calendar.all(client:, home: nil)` — discovers a home's calendars and returns `CalDAV::Calendar` objects. `home` defaults to the client's discovered calendar-home-set.
+- `CalDAV::Calendar.from_resource(resource)` — maps a single `CalDAV::Resource` to a `CalDAV::Calendar`.
+- `CalDAV::Calendar` readers — `path`, `display_name`, `description`, `timezone`, `supported_components`, `ctag`, `color`; `ctag` and `color` are `nil` unless the vendor extensions are loaded. `to_s` gives the display name or path.
 
 
 ## Responses
@@ -96,6 +139,7 @@ caldav.mkcalendar('/calendars/user/new/', body: mkcalendar_xml)
 The REPORT verbs return `CalDAV::MultiStatus`, a type-preserving subclass of `WebDAV::MultiStatus` whose `resources` are `CalDAV::Resource` objects. Each `CalDAV::Resource` adds CalDAV-namespace navigation accessors over the underlying webdav resource:
 
 - `href` — the resource URL
+- `display_name` — the human-readable name from `<d:displayname>`
 - `calendar_data` — the iCalendar string from `<c:calendar-data>`
 - `calendar_description` — `<c:calendar-description>`
 - `supported_calendar_component_set` — `<c:supported-calendar-component-set>`
@@ -113,13 +157,13 @@ These are strictly navigation: they return raw strings and values, never parsed 
 
 ## Limitations
 
-This is a Layer 1 protocol release. Known boundaries:
+The client reads but does not write, and the object layer is only beginning. Known boundaries:
 
-- **Read-only.** Conditional writes need `If-Match`, which webdav's `put` does not yet expose; writes arrive with Layer 2.
-- **No iCalendar parsing.** Use the `icalendar` gem on `resource.calendar_data` if you need parsed events now.
+- **Read-only.** No creating, updating or deleting yet — conditional writes need `If-Match`, which webdav's `put` does not yet expose. Writes are a later increment, beyond Layer 2's read-only objects, not part of them.
+- **No iCalendar parsing.** Use the `icalendar` gem on `resource.calendar_data` if you need parsed events now, until Layer 2's `CalDAV::Event` lands.
 - **Basic auth only.** No OAuth.
 - **Tested against one real CalDAV server.** Other servers should work but are unverified.
-- **No sync-collection.** Incremental sync is deferred.
+- **No sync-collection.** `getctag` gives coarse per-collection change-detection now; fine-grained sync-collection (RFC 6578) is deferred.
 
 
 ## Dependencies

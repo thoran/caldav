@@ -19,6 +19,10 @@ class CalDAV < WebDAV
       hash[:propstats]
     end
 
+    def display_name
+      property(DAV_NAMESPACE, 'displayname')
+    end
+
     # Navigation accessors. Strictly navigation, not parsing: they return the
     # underlying iCalendar string or value.
 

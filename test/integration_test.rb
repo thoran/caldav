@@ -23,7 +23,7 @@ describe 'CalDAV integration' do
     XML
   end
 
-  it "discovers principal, home-set and calendars as bare URL strings" do
+  it "discovers principal and home-set as strings, and calendars as resources" do
     with_caldav_cassette('discovery') do
       principal = caldav.current_user_principal
       _(principal).must_be_kind_of String
@@ -33,9 +33,10 @@ describe 'CalDAV integration' do
       _(home).wont_include '<'
       calendars = caldav.calendars(home)
       _(calendars).must_be_kind_of Array
-      calendars.each do |href|
-        _(href).must_be_kind_of String
-        _(href).wont_include '<'
+      calendars.each do |resource|
+        _(resource).must_be_kind_of CalDAV::Resource
+        _(resource.href).must_be_kind_of String
+        _(resource.href).wont_include '<'
       end
     end
   end
@@ -44,7 +45,7 @@ describe 'CalDAV integration' do
     with_caldav_cassette('calendar_query') do
       calendar = caldav.calendars.first
       skip 'no calendars on this account' unless calendar
-      result = caldav.calendar_query(calendar, body: events_query_body)
+      result = caldav.calendar_query(calendar.href, body: events_query_body)
       _(result).must_be_kind_of CalDAV::MultiStatus
       result.resources.each{|resource| _(resource).must_be_kind_of CalDAV::Resource}
     end

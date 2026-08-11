@@ -173,9 +173,12 @@ describe CalDAV do
       XML
     end
 
-    it "returns only the calendar collection hrefs as bare URL strings" do
+    it "returns only the calendar-collection resources" do
       caldav.stub(:request, response) do
-        _(caldav.calendars('/dav/calendars/user/abc/')).must_equal ['/dav/calendars/user/abc/work/']
+        result = caldav.calendars('/dav/calendars/user/abc/')
+        _(result.length).must_equal 1
+        _(result.first).must_be_kind_of CalDAV::Resource
+        _(result.first.href).must_equal '/dav/calendars/user/abc/work/'
       end
     end
   end
